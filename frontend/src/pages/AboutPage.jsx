@@ -4,7 +4,10 @@ export default function AboutPage() {
       <div className="page-header">
         <div className="container">
           <h1>ℹ️ About IDAS</h1>
-          <p>India Disaster Alert System — open, real-time disaster early warning platform.</p>
+          <p>
+            India Disaster Alert System — open, real-time disaster early warning
+            platform.
+          </p>
         </div>
       </div>
 
@@ -14,14 +17,18 @@ export default function AboutPage() {
           <div className="about-card">
             <h3>What is IDAS?</h3>
             <p>
-              The India Disaster Alert System (IDAS) is an open-access, location-based early
-              warning platform that aggregates data from multiple global disaster monitoring
-              agencies and presents it in a single, unified interface.
+              The India Disaster Alert System (IDAS) is a free, open-access
+              early warning platform built specifically for India. It
+              continuously monitors extreme weather and active wildfire
+              conditions across the country by ingesting data from two trusted
+              scientific sources — <strong>Open-Meteo</strong> and{" "}
+              <strong>NASA FIRMS</strong>.
             </p>
             <br />
             <p>
-              No account or registration is required. The system uses your browser&apos;s
-              built-in geolocation API to show events near you.
+              No account or registration is required. The system uses your
+              browser&apos;s built-in Geolocation API to detect events near you
+              and surface them as priority alerts.
             </p>
           </div>
 
@@ -29,76 +36,279 @@ export default function AboutPage() {
           <div className="about-card">
             <h3>How It Works</h3>
             <ul>
-              <li>A background service fetches data from external APIs every 5 minutes.</li>
-              <li>Each event is stored with its geographic coordinates.</li>
-              <li>When you provide your location, the system uses the Haversine formula to calculate your distance to every active event.</li>
-              <li>Events within a defined alert radius for that disaster type are surfaced as nearby alerts.</li>
-              <li>You can also browse all active events without sharing your location.</li>
+              <li>
+                A background engine fetches data from Open-Meteo and NASA FIRMS
+                every 5 minutes.
+              </li>
+              <li>
+                Open-Meteo forecasts are checked against strict thresholds to
+                extract only extreme conditions (e.g. rainfall &gt; 50 mm,
+                temperature &gt; 40 °C, gusts &gt; 70 km/h).
+              </li>
+              <li>
+                NASA FIRMS satellite passes are filtered for high-confidence
+                thermal anomalies with significant Fire Radiative Power (FRP
+                &gt; 15 MW).
+              </li>
+              <li>
+                All qualifying events are stored in MongoDB with their
+                geographic coordinates and severity.
+              </li>
+              <li>
+                When you share your location, the system uses the{" "}
+                <strong>Haversine formula</strong> to calculate your distance to
+                every active event.
+              </li>
+              <li>
+                Events within the defined alert radius for that disaster type
+                are shown as nearby alerts.
+              </li>
+              <li>
+                You can also browse all active events across India without
+                sharing your location.
+              </li>
             </ul>
           </div>
 
           {/* Data Sources */}
-          <div className="about-card" style={{ gridColumn: '1 / -1' }}>
+          <div className="about-card" style={{ gridColumn: "1 / -1" }}>
             <h3>Data Sources</h3>
             <table className="source-table">
               <thead>
                 <tr>
                   <th>Source</th>
-                  <th>Agency</th>
-                  <th>Data Provided</th>
+                  <th>Provider</th>
+                  <th>What It Detects</th>
+                  <th>Coverage</th>
                   <th>Update Frequency</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>USGS Earthquake Feeds</td>
-                  <td>United States Geological Survey</td>
-                  <td>Earthquakes M2.5+, past 24h</td>
+                  <td>
+                    <strong>Open-Meteo Forecast API</strong>
+                  </td>
+                  <td>Open-Meteo (open-source, free)</td>
+                  <td>
+                    Extreme rainfall, floods, heatwaves, coldwaves, storms,
+                    cyclones, thunderstorms, blizzards, extreme UV radiation
+                  </td>
+                  <td>41 monitoring cities across all regions of India</td>
                   <td>Every 5 minutes</td>
                 </tr>
                 <tr>
-                  <td>NASA EONET</td>
-                  <td>NASA Earth Observatory</td>
-                  <td>Wildfires, storms, floods, volcanoes (open events)</td>
-                  <td>Every 5 minutes</td>
-                </tr>
-                <tr>
-                  <td>OpenWeatherMap</td>
-                  <td>OpenWeather Ltd.</td>
-                  <td>Severe weather alerts, storm/rain conditions for major Indian cities</td>
-                  <td>Every 5 minutes</td>
-                </tr>
-                <tr>
-                  <td>GDACS</td>
-                  <td>Joint Research Centre — EU / UN</td>
-                  <td>Cyclones, floods, earthquakes, volcanoes — global alerts</td>
+                  <td>
+                    <strong>NASA FIRMS — VIIRS SNPP NRT</strong>
+                  </td>
+                  <td>NASA / LANCE FIRMS</td>
+                  <td>
+                    Active wildfires and high-intensity thermal anomalies
+                    detected via VIIRS satellite
+                  </td>
+                  <td>India bounding box (6.5°N–37.5°N, 68°E–97.5°E)</td>
                   <td>Every 5 minutes</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Alert Radii */}
-          <div className="about-card">
-            <h3>Alert Radius by Disaster Type</h3>
+          {/* Event Types */}
+          <div className="about-card" style={{ gridColumn: "1 / -1" }}>
+            <h3>Detected Event Types &amp; Thresholds</h3>
             <table className="source-table">
               <thead>
-                <tr><th>Disaster Type</th><th>Alert Radius</th></tr>
+                <tr>
+                  <th>Event Type</th>
+                  <th>Source</th>
+                  <th>Trigger Condition</th>
+                  <th>Max Severity</th>
+                </tr>
               </thead>
               <tbody>
                 {[
-                  ['Rain / Weather Alert', '50 km'],
-                  ['Extreme Temperature', '100 km'],
-                  ['Flood', '100 km'],
-                  ['Storm', '300 km'],
-                  ['Cyclone', '500 km'],
-                  ['Earthquake', '300 km'],
-                  ['Wildfire', '150 km'],
-                  ['Volcano', '200 km'],
+                  [
+                    "Extreme Flood",
+                    "Open-Meteo",
+                    "Daily rainfall > 100 mm",
+                    "Extreme",
+                  ],
+                  [
+                    "Heavy Rainfall",
+                    "Open-Meteo",
+                    "Daily rainfall > 50 mm",
+                    "High",
+                  ],
+                  [
+                    "Severe Heatwave",
+                    "Open-Meteo",
+                    "Max temperature > 42 °C",
+                    "Extreme",
+                  ],
+                  [
+                    "Heatwave Warning",
+                    "Open-Meteo",
+                    "Max temperature > 40 °C",
+                    "High",
+                  ],
+                  [
+                    "Severe Coldwave",
+                    "Open-Meteo",
+                    "Min temperature < 2 °C",
+                    "Extreme",
+                  ],
+                  [
+                    "Coldwave Warning",
+                    "Open-Meteo",
+                    "Min temperature < 5 °C",
+                    "High",
+                  ],
+                  [
+                    "Destructive Wind",
+                    "Open-Meteo",
+                    "Wind gusts > 90 km/h",
+                    "Extreme",
+                  ],
+                  [
+                    "Severe Storm",
+                    "Open-Meteo",
+                    "Wind gusts > 70 km/h",
+                    "High",
+                  ],
+                  [
+                    "Thunderstorm + Hail",
+                    "Open-Meteo",
+                    "WMO weather code 96 or 99 (severe hail)",
+                    "Extreme",
+                  ],
+                  [
+                    "Thunderstorm Warning",
+                    "Open-Meteo",
+                    "WMO weather code 95",
+                    "High",
+                  ],
+                  [
+                    "Blizzard / Heavy Snow",
+                    "Open-Meteo",
+                    "Snowfall > 30 cm",
+                    "Extreme",
+                  ],
+                  [
+                    "Extreme UV Radiation",
+                    "Open-Meteo",
+                    "UV Index ≥ 11",
+                    "High",
+                  ],
+                  [
+                    "Active Wildfire",
+                    "NASA FIRMS",
+                    "VIIRS thermal anomaly, FRP > 15 MW, confidence: nominal or high",
+                    "Extreme",
+                  ],
+                ].map(([type, source, condition, severity]) => (
+                  <tr key={type}>
+                    <td>
+                      <strong>{type}</strong>
+                    </td>
+                    <td>{source}</td>
+                    <td>{condition}</td>
+                    <td>{severity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Monitoring Coverage */}
+          <div className="about-card" style={{ gridColumn: "1 / -1" }}>
+            <h3>Weather Monitoring Coverage</h3>
+            <p>
+              Open-Meteo forecasts are checked at{" "}
+              <strong>41 strategically selected cities</strong> spanning every
+              geographic region of India. Requests are batched and run every 5
+              minutes.
+            </p>
+            <br />
+            <table className="source-table">
+              <thead>
+                <tr>
+                  <th>Region</th>
+                  <th>Monitored Cities</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  [
+                    "North",
+                    "Srinagar, Jammu, Shimla, Dehradun, Ludhiana, Delhi, Lucknow, Patna",
+                  ],
+                  [
+                    "West",
+                    "Jaipur, Jodhpur, Ahmedabad, Rajkot, Surat, Mumbai, Pune",
+                  ],
+                  ["Central", "Bhopal, Indore, Nagpur, Raipur"],
+                  ["East", "Kolkata, Ranchi, Bhubaneswar, Puri"],
+                  [
+                    "North-East",
+                    "Guwahati, Shillong, Gangtok, Dibrugarh, Agartala, Imphal, Aizawl",
+                  ],
+                  [
+                    "South",
+                    "Hyderabad, Vijayawada, Hubli, Bengaluru, Chennai, Coimbatore, Kochi, Thiruvananthapuram, Madurai",
+                  ],
+                  [
+                    "Islands",
+                    "Port Blair (Andaman & Nicobar), Kavaratti (Lakshadweep)",
+                  ],
+                ].map(([region, cities]) => (
+                  <tr key={region}>
+                    <td>
+                      <strong>{region}</strong>
+                    </td>
+                    <td>{cities}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <br />
+            <p>
+              Wildfire detection via NASA FIRMS covers the{" "}
+              <strong>entire Indian landmass</strong> (6.5°N–37.5°N,
+              68°E–97.5°E) using near-real-time satellite passes from the VIIRS
+              instrument aboard the Suomi NPP satellite.
+            </p>
+          </div>
+
+          {/* Alert Radii */}
+          <div className="about-card">
+            <h3>Alert Radius by Disaster Type</h3>
+            <p>
+              When you share your location, events within the following radii
+              are highlighted as alerts that may affect you.
+            </p>
+            <br />
+            <table className="source-table">
+              <thead>
+                <tr>
+                  <th>Disaster Type</th>
+                  <th>Alert Radius</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Heavy Rainfall", "50 km"],
+                  ["Flood / Extreme Rainfall", "100 km"],
+                  ["Heatwave / Coldwave / UV / Snow", "150 km"],
+                  ["Wildfire", "150 km"],
+                  ["Volcano", "200 km"],
+                  ["Storm / Thunderstorm", "300 km"],
+                  ["Earthquake", "300 km"],
+                  ["Cyclone", "500 km"],
                 ].map(([type, radius]) => (
                   <tr key={type}>
                     <td>{type}</td>
-                    <td>{radius}</td>
+                    <td>
+                      <strong>{radius}</strong>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -109,16 +319,65 @@ export default function AboutPage() {
           <div className="about-card">
             <h3>Disclaimer</h3>
             <ul>
-              <li>This system relies on third-party APIs and may experience data delays or outages.</li>
-              <li>Alerts are informational only and should not replace official government advisories.</li>
-              <li>Always follow instructions from local disaster management authorities (NDMA, IMD, state SDMAs).</li>
-              <li>False positives or missed events are possible. Use this as a supplementary awareness tool.</li>
+              <li>
+                IDAS relies on third-party APIs (Open-Meteo, NASA FIRMS) and may
+                experience data delays or temporary outages.
+              </li>
+              <li>
+                Weather monitoring is limited to the 41 listed cities. Events
+                occurring between monitoring points may not be detected.
+              </li>
+              <li>
+                Wildfire alerts are based on satellite thermal anomalies and may
+                include industrial heat sources or large agricultural burns.
+              </li>
+              <li>
+                All alerts are informational only and must not replace official
+                government advisories or evacuation orders.
+              </li>
+              <li>
+                Always follow instructions from local disaster management
+                authorities.
+              </li>
             </ul>
             <br />
             <p>
-              <strong>Official sources:</strong>{' '}
-              <a href="https://ndma.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB' }}>NDMA</a>,{' '}
-              <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB' }}>IMD</a>
+              <strong>Official sources:</strong>{" "}
+              <a
+                href="https://ndma.gov.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                NDMA
+              </a>
+              ,{" "}
+              <a
+                href="https://mausam.imd.gov.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                IMD
+              </a>
+              ,{" "}
+              <a
+                href="https://firms.modaps.eosdis.nasa.gov"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                NASA FIRMS
+              </a>
+              ,{" "}
+              <a
+                href="https://open-meteo.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                Open-Meteo
+              </a>
             </p>
           </div>
         </div>

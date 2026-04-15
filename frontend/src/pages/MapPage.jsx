@@ -1,62 +1,121 @@
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { fetchAllEvents } from '../services/api';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  CircleMarker,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
+import { useLocation } from "react-router-dom";
+import "leaflet/dist/leaflet.css";
+import { fetchAllEvents } from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const SEV_COLORS = {
-  extreme: '#7C3AED',
-  high:    '#DC2626',
-  medium:  '#D97706',
-  low:     '#16A34A',
+  extreme: "#7C3AED",
+  high: "#DC2626",
+  medium: "#D97706",
+  low: "#16A34A",
 };
 
 // Fit map to India bounds on load
 function IndiaFit() {
   const map = useMap();
+  const location = useLocation();
+
   useEffect(() => {
-    map.fitBounds([[6.5, 68.0], [37.5, 97.5]], { padding: [10, 10] });
-  }, [map]);
+    const params = new URLSearchParams(location.search);
+    const lat = params.get("lat");
+    const lon = params.get("lon") || params.get("lng");
+    const zoom = params.get("zoom") || 8;
+
+    const parsedLat = parseFloat(lat);
+    const parsedLon = parseFloat(lon);
+
+    if (lat && lon && !isNaN(parsedLat) && !isNaN(parsedLon)) {
+      map.setView([parsedLat, parsedLon], parseInt(zoom, 10) || 8);
+    } else {
+      map.fitBounds(
+        [
+          [6.5, 68.0],
+          [37.5, 97.5],
+        ],
+        { padding: [10, 10] },
+      );
+    }
+  }, [map, location.search]);
   return null;
 }
 
+const TYPE_OPTIONS = [
+  { value: "", label: "All Types" },
+  { value: "earthquake", label: "Earthquake" },
+  { value: "flood", label: "Flood" },
+  { value: "cyclone", label: "Cyclone" },
+  { value: "storm", label: "Storm" },
+  { value: "rain", label: "Rain / Weather" },
+  { value: "wildfire", label: "Wildfire" },
+  { value: "volcano", label: "Volcano" },
+  { value: "heatwave", label: "Heatwave" },
+  { value: "weather_alert", label: "Official Alert" },
+];
+
 const DISASTER_ICONS = {
-  earthquake:    '🌍',
-  flood:         '🌊',
-  cyclone:       '🌀',
-  rain:          '🌧️',
-  wildfire:      '🔥',
-  storm:         '⛈️',
-  volcano:       '🌋',
-  weather_alert: '⚠️',
+  earthquake: "🌍",
+  flood: "🌊",
+  cyclone: "🌀",
+  rain: "🌧️",
+  wildfire: "🔥",
+  storm: "⛈️",
+  volcano: "🌋",
+  heatwave: "🌡️",
+  weather_alert: "⚠️",
 };
 
 export default function MapPage() {
-  const [events, setEvents]   = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
+  const [typeFilter, setTypeFilter] = useState("");
 
   useEffect(() => {
     fetchAllEvents({ limit: 500 })
       .then((d) => setEvents(d.events || []))
-      .catch(() => setError('Could not load events.'))
+      .catch(() => setError("Could not load events."))
       .finally(() => setLoading(false));
   }, []);
 
-  const validEvents = events.filter(
-    (e) => e.latitude != null && e.longitude != null
-  );
+  const validEvents = events
+    .filter((e) => e.latitude != null && e.longitude != null)
+    .filter((e) => (typeFilter ? e.disasterType === typeFilter : true));
 
   return (
     <div>
       <div className="page-header">
         <div className="container">
           <h1>🗺️ Disaster Map</h1>
-          <p>All active disaster events plotted across India and the surrounding region.</p>
+          <p>
+            All active disaster events plotted across India and the surrounding
+            region.
+          </p>
         </div>
       </div>
 
       <div className="container page-content">
+        <div className="alert-list-controls" style={{ marginBottom: "16px" }}>
+          <select
+            className="filter-select"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            {TYPE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Legend */}
         <div className="map-legend">
           <strong>Severity:</strong>
@@ -66,12 +125,22 @@ export default function MapPage() {
               {k.charAt(0).toUpperCase() + k.slice(1)}
             </span>
           ))}
-          <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <span
+            style={{
+              marginLeft: "auto",
+              fontSize: "0.75rem",
+              color: "var(--text-muted)",
+            }}
+          >
             {validEvents.length} events shown
           </span>
         </div>
 
-        {error && <div className="alert-banner danger" style={{ marginBottom: 12 }}>⚠️ {error}</div>}
+        {error && (
+          <div className="alert-banner danger" style={{ marginBottom: 12 }}>
+            ⚠️ {error}
+          </div>
+        )}
 
         {loading ? (
           <LoadingSpinner text="Loading map data…" />
@@ -80,7 +149,7 @@ export default function MapPage() {
             <MapContainer
               center={[20.5937, 78.9629]}
               zoom={5}
-              style={{ height: '72vh', width: '100%' }}
+              style={{ height: "72vh", width: "100%" }}
               scrollWheelZoom
             >
               <IndiaFit />
@@ -92,23 +161,34 @@ export default function MapPage() {
                 <CircleMarker
                   key={e._id || e.eventId}
                   center={[e.latitude, e.longitude]}
-                  radius={e.severity === 'extreme' ? 11 : e.severity === 'high' ? 9 : 7}
+                  radius={
+                    e.severity === "extreme"
+                      ? 11
+                      : e.severity === "high"
+                        ? 9
+                        : 7
+                  }
                   pathOptions={{
-                    color: SEV_COLORS[e.severity] || '#999',
-                    fillColor: SEV_COLORS[e.severity] || '#999',
+                    color: SEV_COLORS[e.severity] || "#999",
+                    fillColor: SEV_COLORS[e.severity] || "#999",
                     fillOpacity: 0.65,
                     weight: 1.5,
                   }}
                 >
                   <Tooltip>
                     <strong>
-                      {DISASTER_ICONS[e.disasterType] || '⚡'} {e.title}
+                      {DISASTER_ICONS[e.disasterType] || "⚡"} {e.title}
                     </strong>
                     <br />
                     Severity: {e.severity} | Source: {e.sourceAPI}
-                    {e.magnitude != null && <><br />Magnitude: M{e.magnitude}</>}
+                    {e.magnitude != null && (
+                      <>
+                        <br />
+                        Magnitude: M{e.magnitude}
+                      </>
+                    )}
                     <br />
-                    {new Date(e.timestamp).toLocaleDateString('en-IN')}
+                    {new Date(e.timestamp).toLocaleDateString("en-IN")}
                   </Tooltip>
                 </CircleMarker>
               ))}
