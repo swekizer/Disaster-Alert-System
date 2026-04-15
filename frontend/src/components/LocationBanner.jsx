@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export function useGeolocation() {
   const [state, setState] = useState({
@@ -22,6 +22,7 @@ export function useGeolocation() {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        localStorage.setItem('location-preference', 'allowed');
         setState({
           status: 'granted',
           lat: pos.coords.latitude,
@@ -30,6 +31,7 @@ export function useGeolocation() {
         });
       },
       (err) => {
+        localStorage.setItem('location-preference', 'denied');
         setState({
           status: 'denied',
           lat: null,
@@ -40,6 +42,22 @@ export function useGeolocation() {
       { timeout: 10000, enableHighAccuracy: false }
     );
   }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('location-preference') === 'allowed') {
+      request();
+    } else if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'geolocation' })
+        .then(result => {
+          if (result.state === 'granted') {
+            request();
+          }
+        })
+        .catch(() => {
+          // Ignore errors in case of permissions API issues
+        });
+    }
+  }, [request]);
 
   return { ...state, request };
 }
