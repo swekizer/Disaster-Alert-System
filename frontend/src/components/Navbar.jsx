@@ -6,6 +6,7 @@ const navLinks = [
   { to: '/alerts', label: 'Alerts' },
   { to: '/map', label: 'Map' },
   { to: '/about', label: 'About' },
+  { to: '/settings', label: 'Settings' },
 ];
 
 export default function Navbar({ lastUpdated }) {

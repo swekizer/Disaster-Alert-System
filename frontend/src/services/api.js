@@ -47,3 +47,13 @@ export async function checkHealth() {
   const { data } = await api.get('/health');
   return data;
 }
+
+export async function fetchPreferences() {
+  const { data } = await api.get('/preferences');
+  return data;
+}
+
+export async function updatePreferences(prefs) {
+  const { data } = await api.put('/preferences', prefs);
+  return data;
+}

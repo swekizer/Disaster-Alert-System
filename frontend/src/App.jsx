@@ -7,6 +7,7 @@ import HomePage   from './pages/HomePage';
 import AlertsPage from './pages/AlertsPage';
 import MapPage    from './pages/MapPage';
 import AboutPage  from './pages/AboutPage';
+import SettingsPage from './pages/SettingsPage';
 import './index.css';
 
 import { useAuth } from '@clerk/clerk-react';
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/alerts"  element={<AlertsPage geo={geo} updateLastUpdated={updateLastUpdated} />} />
               <Route path="/map"     element={<MapPage />} />
               <Route path="/about"   element={<AboutPage />} />
+              <Route path="/settings" element={<SettingsPage geo={geo} />} />
             </Routes>
           </main>
           <Footer />
