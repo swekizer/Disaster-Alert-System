@@ -6,6 +6,7 @@ const cron = require('node-cron');
 
 const eventsRouter = require('./routes/events');
 const { runDisasterEngine } = require('./services/engine');
+const { clerkMiddleware, requireAuth } = require('@clerk/express');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // ── Request logging ───────────────────────────────────────────────────────────
 app.use((req, _res, next) => {
@@ -32,7 +34,7 @@ app.use((req, _res, next) => {
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/events', eventsRouter);
+app.use('/api/events', requireAuth(), eventsRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

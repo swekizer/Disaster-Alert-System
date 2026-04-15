@@ -7,6 +7,20 @@ const api = axios.create({
   timeout: 15000,
 });
 
+export function setupAxiosAuth(getToken) {
+  api.interceptors.request.use(async (config) => {
+    try {
+      const token = await getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (err) {
+      console.warn("Could not get Clerk token");
+    }
+    return config;
+  });
+}
+
 export async function fetchAllEvents(params = {}) {
   const { data } = await api.get('/events', { params });
   return data;

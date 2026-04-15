@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
 import Navbar from './components/Navbar';
 import { useGeolocation } from './components/LocationBanner';
 import HomePage   from './pages/HomePage';
@@ -7,6 +8,9 @@ import AlertsPage from './pages/AlertsPage';
 import MapPage    from './pages/MapPage';
 import AboutPage  from './pages/AboutPage';
 import './index.css';
+
+import { useAuth } from '@clerk/clerk-react';
+import { setupAxiosAuth } from './services/api';
 
 function Footer() {
   return (
@@ -27,6 +31,13 @@ function Footer() {
 export default function App() {
   const geo = useGeolocation();
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  
+  const { getToken } = useAuth();
+  
+  // Configure Axios to use the Clerk token for all future API requests
+  useState(() => {
+    setupAxiosAuth(getToken);
+  });
 
   const updateLastUpdated = (date = new Date()) => {
     setLastUpdated(date);
@@ -34,16 +45,23 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Navbar lastUpdated={lastUpdated} />
-      <main>
-        <Routes>
-          <Route path="/"        element={<HomePage   geo={geo} updateLastUpdated={updateLastUpdated} />} />
-          <Route path="/alerts"  element={<AlertsPage geo={geo} updateLastUpdated={updateLastUpdated} />} />
-          <Route path="/map"     element={<MapPage />} />
-          <Route path="/about"   element={<AboutPage />} />
-        </Routes>
-      </main>
-      <Footer />
-    </BrowserRouter>
-  );
-}
+      <SignedIn>
+          <Navbar lastUpdated={lastUpdated} />
+          <main>
+            <Routes>
+              <Route path="/"        element={<HomePage   geo={geo} updateLastUpdated={updateLastUpdated} />} />
+              <Route path="/alerts"  element={<AlertsPage geo={geo} updateLastUpdated={updateLastUpdated} />} />
+              <Route path="/map"     element={<MapPage />} />
+              <Route path="/about"   element={<AboutPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </SignedIn>
+        <SignedOut>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f0f2f5' }}>
+            <SignIn routing="hash" />
+          </div>
+        </SignedOut>
+      </BrowserRouter>
+    );
+  }

@@ -19,10 +19,11 @@ export default function AboutPage() {
             <p>
               The India Disaster Alert System (IDAS) is a free, open-access
               early warning platform built specifically for India. It
-              continuously monitors extreme weather and active wildfire
-              conditions across the country by ingesting data from two trusted
-              scientific sources — <strong>Open-Meteo</strong> and{" "}
-              <strong>NASA FIRMS</strong>.
+              continuously monitors extreme weather, active wildfires, air
+              quality, and seismic activity by ingesting data from trusted
+              scientific sources — <strong>Open-Meteo</strong>,{" "}
+              <strong>NASA FIRMS</strong>, <strong>USGS</strong>, and{" "}
+              <strong>WAQI</strong>.
             </p>
             <br />
             <p>
@@ -37,8 +38,8 @@ export default function AboutPage() {
             <h3>How It Works</h3>
             <ul>
               <li>
-                A background engine fetches data from Open-Meteo and NASA FIRMS
-                every 5 minutes.
+                A background engine fetches data from Open-Meteo, NASA FIRMS,
+                USGS, and WAQI continuously.
               </li>
               <li>
                 Open-Meteo forecasts are checked against strict thresholds to
@@ -107,6 +108,24 @@ export default function AboutPage() {
                   </td>
                   <td>India bounding box (6.5°N–37.5°N, 68°E–97.5°E)</td>
                   <td>Every 5 minutes</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>USGS Earthquakes</strong>
+                  </td>
+                  <td>US Geological Survey</td>
+                  <td>Recent earthquakes (magnitude &gt; 0)</td>
+                  <td>South/SE Asia (-5°N–45°N, 55°E–110°E)</td>
+                  <td>Continuous</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>WAQI Air Quality</strong>
+                  </td>
+                  <td>World Air Quality Index Project</td>
+                  <td>Severe air pollution (AQI &gt; 150)</td>
+                  <td>South/SE Asia (-5°N–45°N, 55°E–110°E)</td>
+                  <td>Continuous</td>
                 </tr>
               </tbody>
             </table>
@@ -204,6 +223,18 @@ export default function AboutPage() {
                     "VIIRS thermal anomaly, FRP > 15 MW, confidence: nominal or high",
                     "Extreme",
                   ],
+                  [
+                    "Earthquake",
+                    "USGS",
+                    "Magnitude ≥ 4.0 (Medium), ≥ 5.5 (High), ≥ 7.0 (Extreme)",
+                    "Varies",
+                  ],
+                  [
+                    "Severe Air Quality",
+                    "WAQI",
+                    "AQI > 150 (Medium), > 200 (High), > 300 (Extreme)",
+                    "Varies",
+                  ],
                 ].map(([type, source, condition, severity]) => (
                   <tr key={type}>
                     <td>
@@ -276,6 +307,13 @@ export default function AboutPage() {
               68°E–97.5°E) using near-real-time satellite passes from the VIIRS
               instrument aboard the Suomi NPP satellite.
             </p>
+            <br />
+            <p>
+              Earthquake (USGS) and Air Quality (WAQI) monitoring covers a
+              broader <strong>South and Southeast Asia region</strong> (-5° to
+              45° Lat, 55° to 110° Lon) to capture events that may impact the
+              subcontinent.
+            </p>
           </div>
 
           {/* Alert Radii */}
@@ -320,8 +358,8 @@ export default function AboutPage() {
             <h3>Disclaimer</h3>
             <ul>
               <li>
-                IDAS relies on third-party APIs (Open-Meteo, NASA FIRMS) and may
-                experience data delays or temporary outages.
+                IDAS relies on third-party APIs (Open-Meteo, NASA FIRMS, USGS,
+                WAQI) and may experience data delays or temporary outages.
               </li>
               <li>
                 Weather monitoring is limited to the 41 listed cities. Events
@@ -377,6 +415,24 @@ export default function AboutPage() {
                 style={{ color: "#2563EB" }}
               >
                 Open-Meteo
+              </a>
+              ,{" "}
+              <a
+                href="https://earthquake.usgs.gov"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                USGS
+              </a>
+              ,{" "}
+              <a
+                href="https://waqi.info"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#2563EB" }}
+              >
+                WAQI
               </a>
             </p>
           </div>

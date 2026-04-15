@@ -1,4 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
+import { UserButton } from '@clerk/clerk-react';
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -34,11 +35,14 @@ export default function Navbar({ lastUpdated }) {
               {l.label}
             </NavLink>
           ))}
-        </div>
+      </div>
 
-        <div className="navbar-live">
-          <span className="live-dot" />
-          {ts ? `Updated ${ts}` : 'Live monitoring'}
+        <div className="navbar-live" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div>
+            <span className="live-dot" />
+            {ts ? `Updated ${ts}` : 'Live monitoring'}
+          </div>
+          <UserButton afterSignOutUrl="/" />
         </div>
       </div>
     </nav>
