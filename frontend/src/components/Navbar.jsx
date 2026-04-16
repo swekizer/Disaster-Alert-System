@@ -2,11 +2,12 @@ import { NavLink, Link } from 'react-router-dom';
 import { UserButton } from '@clerk/clerk-react';
 
 const navLinks = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/alerts', label: 'Alerts' },
-  { to: '/map', label: 'Map' },
-  { to: '/about', label: 'About' },
-  { to: '/settings', label: 'Settings' },
+  { to: '/',        label: 'Home',     end: true },
+  { to: '/alerts',  label: 'Alerts' },
+  { to: '/map',     label: 'Map' },
+  { to: '/news',    label: 'News' },
+  { to: '/about',   label: 'About' },
+  { to: '/settings',label: 'Settings' },
 ];
 
 export default function Navbar({ lastUpdated }) {

@@ -57,3 +57,10 @@ export async function updatePreferences(prefs) {
   const { data } = await api.put('/preferences', prefs);
   return data;
 }
+
+export async function fetchNews({ topic = 'all', date } = {}) {
+  const params = { topic };
+  if (date) params.date = date;
+  const { data } = await api.get('/news', { params });
+  return data;
+}

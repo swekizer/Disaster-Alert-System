@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cron = require('node-cron');
 
-const eventsRouter = require('./routes/events');
+const eventsRouter      = require('./routes/events');
 const preferencesRouter = require('./routes/preferences');
+const newsRouter        = require('./routes/news');
 const { runDisasterEngine } = require('./services/engine');
 const { clerkMiddleware, requireAuth } = require('@clerk/express');
 
@@ -35,8 +36,9 @@ app.use((req, _res, next) => {
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/events', eventsRouter);
+app.use('/api/events',      eventsRouter);
 app.use('/api/preferences', preferencesRouter);
+app.use('/api/news',        newsRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
 import Navbar from './components/Navbar';
 import { useGeolocation } from './components/LocationBanner';
-import HomePage   from './pages/HomePage';
-import AlertsPage from './pages/AlertsPage';
-import MapPage    from './pages/MapPage';
-import AboutPage  from './pages/AboutPage';
+import HomePage    from './pages/HomePage';
+import AlertsPage  from './pages/AlertsPage';
+import MapPage     from './pages/MapPage';
+import NewsPage    from './pages/NewsPage';
+import AboutPage   from './pages/AboutPage';
 import SettingsPage from './pages/SettingsPage';
 import './index.css';
 
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/"        element={<HomePage   geo={geo} updateLastUpdated={updateLastUpdated} />} />
               <Route path="/alerts"  element={<AlertsPage geo={geo} updateLastUpdated={updateLastUpdated} />} />
               <Route path="/map"     element={<MapPage />} />
+              <Route path="/news"    element={<NewsPage />} />
               <Route path="/about"   element={<AboutPage />} />
               <Route path="/settings" element={<SettingsPage geo={geo} />} />
             </Routes>
