@@ -84,13 +84,16 @@ export default function SettingsPage({ geo }) {
   }
 
   return (
-    <div className="page-content container">
+    <div>
       <div className="page-header">
-        <h1>Notification Settings</h1>
-        <p>Manage your email alerts for nearby disaster events.</p>
+        <div className="container">
+          <h1>⚙️ Notification Settings</h1>
+          <p>Manage your email alerts for nearby disaster events.</p>
+        </div>
       </div>
 
-      <div className="card" style={{ padding: '24px', maxWidth: '600px' }}>
+      <div className="container page-content">
+        <div className="card" style={{ padding: '24px', maxWidth: '600px' }}>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div>
@@ -200,5 +203,6 @@ export default function SettingsPage({ geo }) {
         </form>
       </div>
     </div>
+  </div>
   );
 }
