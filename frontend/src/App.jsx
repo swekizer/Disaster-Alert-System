@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
 import Navbar from './components/Navbar';
 import { useGeolocation } from './components/LocationBanner';
@@ -41,9 +41,9 @@ export default function App() {
     setupAxiosAuth(getToken);
   });
 
-  const updateLastUpdated = (date = new Date()) => {
+  const updateLastUpdated = useCallback((date = new Date()) => {
     setLastUpdated(date);
-  };
+  }, []);
 
   return (
     <BrowserRouter>
