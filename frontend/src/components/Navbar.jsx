@@ -40,9 +40,11 @@ export default function Navbar({ lastUpdated }) {
       </div>
 
         <div className="navbar-live" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <div>
-            <span className="live-dot" />
-            {ts ? `Updated ${ts}` : 'Live monitoring'}
+          <div className="live-indicator">
+            <span className="live-dot-wrap">
+              <span className="live-dot" />
+            </span>
+            {ts ? `Updated ${ts}` : 'Live'}
           </div>
           <UserButton afterSignOutUrl="/" />
         </div>
