@@ -4,7 +4,7 @@ import LocationBanner from '../components/LocationBanner';
 import StatBar from '../components/StatBar';
 import AlertCard from '../components/AlertCard';
 import LoadingSpinner from '../components/LoadingSpinner';
-import PollingTimer from '../components/PollingTimer';
+
 import { fetchAllEvents, fetchNearbyEvents, fetchStats } from '../services/api';
 
 export default function HomePage({ geo, updateLastUpdated }) {
@@ -13,7 +13,7 @@ export default function HomePage({ geo, updateLastUpdated }) {
   const [nearby, setNearby]       = useState([]);
   const [loading, setLoading]     = useState(true);
   const [backendOk, setBackendOk] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+
 
   const loadData = async () => {
     setLoading(true);
@@ -26,7 +26,7 @@ export default function HomePage({ geo, updateLastUpdated }) {
       setRecent(eventsData?.events || []);
       setBackendOk(true);
       if (updateLastUpdated) updateLastUpdated(new Date());
-      setRefreshKey(prev => prev + 1); // Reset timer
+
     } catch {
       setBackendOk(false);
     } finally {
@@ -78,8 +78,7 @@ export default function HomePage({ geo, updateLastUpdated }) {
         {/* Location Banner */}
         <LocationBanner geo={geo} />
 
-        {/* Polling Timer - Linked to backend logic */}
-        <PollingTimer onTimeout={loadData} resetKey={refreshKey} interval={300} />
+
 
         {/* Stats */}
         {loading ? (

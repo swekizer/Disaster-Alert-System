@@ -28,7 +28,7 @@ const SEV_OPTIONS = [
   { value: "low", label: "Low" },
 ];
 
-import PollingTimer from "../components/PollingTimer";
+
 
 export default function AlertsPage({ geo, updateLastUpdated }) {
   const [events, setEvents] = useState([]);
@@ -38,7 +38,7 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
   const [typeFilter, setType] = useState("");
   const [sevFilter, setSev] = useState("");
   const [nearby, setNearby] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
+
 
   const loadEvents = async () => {
     setLoading(true);
@@ -52,7 +52,7 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
         setEvents(d.events || []);
       }
       if (updateLastUpdated) updateLastUpdated(new Date());
-      setRefreshKey((prev) => prev + 1); // Reset timer
+
     } catch (e) {
       setError("Unable to load events. Is the backend running?");
     } finally {
@@ -110,12 +110,7 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
       </div>
 
       <div className="container page-content">
-        {/* Polling Timer - Linked to backend logic */}
-        <PollingTimer
-          onTimeout={loadEvents}
-          resetKey={refreshKey}
-          interval={300}
-        />
+
         {/* Controls */}
         <div className="alert-list-controls">
           <input
