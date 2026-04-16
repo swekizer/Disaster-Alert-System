@@ -50,26 +50,30 @@ function IndiaFit() {
 const TYPE_OPTIONS = [
   { value: "", label: "All Types" },
   { value: "earthquake", label: "Earthquake" },
+  { value: "wildfire", label: "Wildfire" },
   { value: "flood", label: "Flood" },
+  { value: "rain", label: "Heavy Rain" },
   { value: "cyclone", label: "Cyclone" },
   { value: "storm", label: "Storm" },
-  { value: "rain", label: "Rain / Weather" },
-  { value: "wildfire", label: "Wildfire" },
-  { value: "volcano", label: "Volcano" },
   { value: "heatwave", label: "Heatwave" },
-  { value: "weather_alert", label: "Official Alert" },
+  { value: "coldwave", label: "Coldwave" },
+  { value: "snow", label: "Snow" },
+  { value: "uv", label: "UV Radiation" },
+  { value: "air_quality", label: "Air Quality" },
 ];
 
 const DISASTER_ICONS = {
   earthquake: "🌍",
-  flood: "🌊",
-  cyclone: "🌀",
-  rain: "🌧️",
   wildfire: "🔥",
+  flood: "🌊",
+  rain: "🌧️",
+  cyclone: "🌀",
   storm: "⛈️",
-  volcano: "🌋",
   heatwave: "🌡️",
-  weather_alert: "⚠️",
+  coldwave: "🥶",
+  snow: "❄️",
+  uv: "☀️",
+  air_quality: "😷",
 };
 
 export default function MapPage() {
@@ -93,49 +97,43 @@ export default function MapPage() {
     <div>
       <div className="page-header">
         <div className="container">
-          <h1>🗺️ Disaster Map</h1>
-          <p>
-            All active disaster events plotted across India and the surrounding
-            region.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h1>🗺️ Disaster Map</h1>
+              <p>
+                Active events across India —{' '}
+                <strong style={{ color: 'var(--text-primary)' }}>{validEvents.length}</strong> shown
+              </p>
+            </div>
+            {/* Severity legend */}
+            <div className="map-legend" style={{ margin: 0 }}>
+              <strong>Severity:</strong>
+              {Object.entries(SEV_COLORS).map(([k, v]) => (
+                <span key={k} className="legend-item">
+                  <span className="legend-dot" style={{ background: v }} />
+                  {k.charAt(0).toUpperCase() + k.slice(1)}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Pill type filters */}
+          <div className="map-type-filters">
+            {TYPE_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                className={`map-filter-pill${typeFilter === o.value ? ' active' : ''}`}
+                onClick={() => setTypeFilter(o.value)}
+              >
+                {o.value && DISASTER_ICONS[o.value] ? `${DISASTER_ICONS[o.value]} ` : ''}
+                {o.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="container page-content">
-        <div className="alert-list-controls" style={{ marginBottom: "16px" }}>
-          <select
-            className="filter-select"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
-            {TYPE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Legend */}
-        <div className="map-legend">
-          <strong>Severity:</strong>
-          {Object.entries(SEV_COLORS).map(([k, v]) => (
-            <span key={k} className="legend-item">
-              <span className="legend-dot" style={{ background: v }} />
-              {k.charAt(0).toUpperCase() + k.slice(1)}
-            </span>
-          ))}
-          <span
-            style={{
-              marginLeft: "auto",
-              fontSize: "0.75rem",
-              color: "var(--text-muted)",
-            }}
-          >
-            {validEvents.length} events shown
-          </span>
-        </div>
-
         {error && (
           <div className="alert-banner danger" style={{ marginBottom: 12 }}>
             ⚠️ {error}

@@ -2,17 +2,16 @@ import { useNavigate } from "react-router-dom";
 
 const DISASTER_ICONS = {
   earthquake: "🌍",
-  flood: "🌊",
-  cyclone: "🌀",
-  rain: "🌧️",
   wildfire: "🔥",
+  flood: "🌊",
+  rain: "🌧️",
+  cyclone: "🌀",
   storm: "⛈️",
-  volcano: "🌋",
-  weather_alert: "⚠️",
   heatwave: "🌡️",
-  drought: "🏜️",
+  coldwave: "🥶",
   snow: "❄️",
-  ice: "🧊",
+  uv: "☀️",
+  air_quality: "😷",
 };
 
 function timeAgo(ts) {

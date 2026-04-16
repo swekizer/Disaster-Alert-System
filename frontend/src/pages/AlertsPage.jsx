@@ -10,14 +10,16 @@ import {
 const TYPE_OPTIONS = [
   { value: "", label: "All Types" },
   { value: "earthquake", label: "Earthquake" },
+  { value: "wildfire", label: "Wildfire" },
   { value: "flood", label: "Flood" },
+  { value: "rain", label: "Heavy Rain" },
   { value: "cyclone", label: "Cyclone" },
   { value: "storm", label: "Storm" },
-  { value: "rain", label: "Rain / Weather" },
-  { value: "wildfire", label: "Wildfire" },
-  { value: "volcano", label: "Volcano" },
   { value: "heatwave", label: "Heatwave" },
-  { value: "weather_alert", label: "Official Alert" },
+  { value: "coldwave", label: "Coldwave" },
+  { value: "snow", label: "Snow" },
+  { value: "uv", label: "UV Radiation" },
+  { value: "air_quality", label: "Air Quality" },
 ];
 
 const SEV_OPTIONS = [

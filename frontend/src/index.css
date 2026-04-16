@@ -425,8 +425,11 @@ ul { list-style: none; }
 .alert-icon.rain        { background: #E0F2FE; }
 .alert-icon.wildfire    { background: #FEE2E2; }
 .alert-icon.storm       { background: #F3E8FF; }
-.alert-icon.volcano     { background: #FFF7ED; }
-.alert-icon.weather_alert { background: #F0FDF4; }
+.alert-icon.heatwave    { background: #FFF7ED; }
+.alert-icon.coldwave    { background: #EFF6FF; }
+.alert-icon.snow        { background: #F0F9FF; }
+.alert-icon.uv          { background: #FFFBEB; }
+.alert-icon.air_quality { background: #F0FDF4; }
 .alert-icon.default     { background: var(--bg-muted); }
 
 .alert-body {
@@ -701,6 +704,44 @@ ul { list-style: none; }
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* ── Map Type Filter Pills ──────────────────────────────────── */
+.map-type-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.map-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+.map-filter-pill:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.map-filter-pill.active {
+  background: #1E3A5F;
+  color: #fff;
+  border-color: #1E3A5F;
+  box-shadow: 0 1px 4px rgba(30, 58, 95, 0.25);
 }
 
 /* ── About Page ─────────────────────────────────────────────── */
