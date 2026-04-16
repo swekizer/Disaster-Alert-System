@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import LocationBanner from '../components/LocationBanner';
 import StatBar from '../components/StatBar';
@@ -15,7 +15,7 @@ export default function HomePage({ geo, updateLastUpdated }) {
   const [backendOk, setBackendOk] = useState(null);
 
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [statsData, eventsData] = await Promise.all([
@@ -32,18 +32,18 @@ export default function HomePage({ geo, updateLastUpdated }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [updateLastUpdated]);
 
-  const loadNearby = async () => {
+  const loadNearby = useCallback(async () => {
     if (geo.status !== 'granted') return;
     try {
       const d = await fetchNearbyEvents(geo.lat, geo.lon);
       setNearby(d?.events || []);
-    } catch {}
-  };
+    } catch (err) { console.warn('[Nearby] Failed to fetch nearby events:', err); }
+  }, [geo.status, geo.lat, geo.lon]);
 
-  useEffect(() => { loadData(); }, []);
-  useEffect(() => { loadNearby(); }, [geo.status]);
+  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { loadNearby(); }, [loadNearby]);
 
   return (
     <div>
