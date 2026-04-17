@@ -40,6 +40,11 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
   const [typeFilter, setType] = useState("");
   const [sevFilter, setSev] = useState("");
   const [nearby, setNearby] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(40);
+
+  useEffect(() => {
+    setVisibleCount(40);
+  }, [typeFilter, sevFilter, search, nearby]);
 
 
   const loadEvents = async () => {
@@ -50,7 +55,7 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
         const d = await fetchNearbyEvents(geo.lat, geo.lon);
         setEvents(d.events || []);
       } else {
-        const d = await fetchAllEvents({ limit: 300 });
+        const d = await fetchAllEvents({ limit: 1000 });
         setEvents(d.events || []);
       }
       if (updateLastUpdated) updateLastUpdated(new Date());
@@ -97,6 +102,8 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
       return true;
     });
   }, [events, typeFilter, sevFilter, search]);
+
+  const displayedEvents = filtered.slice(0, visibleCount);
 
   return (
     <div>
@@ -199,11 +206,24 @@ export default function AlertsPage({ geo, updateLastUpdated }) {
             </p>
           </div>
         ) : (
-          <div className="alert-list">
-            {filtered.map((e) => (
-              <AlertCard key={e._id || e.eventId} event={e} />
-            ))}
-          </div>
+          <>
+            <div className="alert-list">
+              {displayedEvents.map((e) => (
+                <AlertCard key={e._id || e.eventId} event={e} />
+              ))}
+            </div>
+            {visibleCount < filtered.length && (
+              <div style={{ textAlign: "center", marginTop: "20px", marginBottom: "40px" }}>
+                <button
+                  className="refresh-btn"
+                  style={{ padding: "10px 24px", fontSize: "1rem", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", transition: "background-color 0.2s" }}
+                  onClick={() => setVisibleCount((prev) => prev + 40)}
+                >
+                  Load More ({filtered.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

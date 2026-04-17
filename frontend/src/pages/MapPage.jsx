@@ -10,6 +10,7 @@ import { useLocation } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import { fetchAllEvents } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
+import GlobeMap from "../components/GlobeMap";
 
 const SEV_COLORS = {
   extreme: "#7C3AED",
@@ -81,6 +82,7 @@ export default function MapPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [typeFilter, setTypeFilter] = useState("");
+  const [viewMode, setViewMode] = useState("globe");
 
   useEffect(() => {
     fetchAllEvents({ limit: 500 })
@@ -97,24 +99,9 @@ export default function MapPage() {
     <div>
       <div className="page-header">
         <div className="container">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <h1>🗺️ Disaster Map</h1>
-              <p>
-                Active events across India —{' '}
-                <strong style={{ color: 'var(--text-primary)' }}>{validEvents.length}</strong> shown
-              </p>
-            </div>
-            {/* Severity legend */}
-            <div className="map-legend" style={{ margin: 0 }}>
-              <strong>Severity:</strong>
-              {Object.entries(SEV_COLORS).map(([k, v]) => (
-                <span key={k} className="legend-item">
-                  <span className="legend-dot" style={{ background: v }} />
-                  {k.charAt(0).toUpperCase() + k.slice(1)}
-                </span>
-              ))}
-            </div>
+          <div>
+            <h1>🗺️ Disaster Map</h1>
+            <p>Active events across India</p>
           </div>
 
           {/* Pill type filters */}
@@ -143,55 +130,129 @@ export default function MapPage() {
         {loading ? (
           <LoadingSpinner text="Loading map data…" />
         ) : (
-          <div className="map-container">
-            <MapContainer
-              center={[20.5937, 78.9629]}
-              zoom={5}
-              style={{ height: "72vh", width: "100%" }}
-              scrollWheelZoom
-            >
-              <IndiaFit />
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-              />
-              {validEvents.map((e) => (
-                <CircleMarker
-                  key={e._id || e.eventId}
-                  center={[e.latitude, e.longitude]}
-                  radius={
-                    e.severity === "extreme"
-                      ? 11
-                      : e.severity === "high"
-                        ? 9
-                        : 7
-                  }
-                  pathOptions={{
-                    color: SEV_COLORS[e.severity] || "#999",
-                    fillColor: SEV_COLORS[e.severity] || "#999",
-                    fillOpacity: 0.65,
-                    weight: 1.5,
+          <>
+            {/* View Mode Toggle — outside the map box, right aligned */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+              <div style={{
+                display: 'flex',
+                gap: '3px',
+                background: '#FFFFFF',
+                padding: '3px',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-sm)',
+              }}>
+                <button
+                  onClick={() => setViewMode('map')}
+                  style={{
+                    padding: '6px 16px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    background: viewMode === 'map' ? '#1E3A5F' : 'transparent',
+                    color: viewMode === 'map' ? '#FFFFFF' : '#4B5563',
+                    fontWeight: viewMode === 'map' ? '600' : '500',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontFamily: 'var(--font)',
                   }}
+                >🗺️ 2D Map</button>
+                <button
+                  onClick={() => setViewMode('globe')}
+                  style={{
+                    padding: '6px 16px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    background: viewMode === 'globe' ? '#1E3A5F' : 'transparent',
+                    color: viewMode === 'globe' ? '#FFFFFF' : '#4B5563',
+                    fontWeight: viewMode === 'globe' ? '600' : '500',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontFamily: 'var(--font)',
+                  }}
+                >🌍 3D Globe</button>
+              </div>
+            </div>
+          <div className="map-container" style={{ height: "72vh" }}>
+            {viewMode === "globe" ? (
+              <GlobeMap events={validEvents} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                <MapContainer
+                  center={[20.5937, 78.9629]}
+                  zoom={5}
+                  style={{ height: "100%", width: "100%", borderRadius: "8px" }}
+                  scrollWheelZoom
                 >
-                  <Tooltip>
-                    <strong>
-                      {DISASTER_ICONS[e.disasterType] || "⚡"} {e.title}
-                    </strong>
-                    <br />
-                    Severity: {e.severity} | Source: {e.sourceAPI}
-                    {e.magnitude != null && (
-                      <>
+                  <IndiaFit />
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+                  />
+                  {validEvents.map((e) => (
+                    <CircleMarker
+                      key={e._id || e.eventId}
+                      center={[e.latitude, e.longitude]}
+                      radius={
+                        e.severity === "extreme"
+                          ? 11
+                          : e.severity === "high"
+                            ? 9
+                            : 7
+                      }
+                      pathOptions={{
+                        color: SEV_COLORS[e.severity] || "#999",
+                        fillColor: SEV_COLORS[e.severity] || "#999",
+                        fillOpacity: 0.65,
+                        weight: 1.5,
+                      }}
+                    >
+                      <Tooltip>
+                        <strong>
+                          {DISASTER_ICONS[e.disasterType] || "⚡"} {e.title}
+                        </strong>
                         <br />
-                        Magnitude: M{e.magnitude}
-                      </>
-                    )}
-                    <br />
-                    {new Date(e.timestamp).toLocaleDateString("en-IN")}
-                  </Tooltip>
-                </CircleMarker>
-              ))}
-            </MapContainer>
+                        Severity: {e.severity} | Source: {e.sourceAPI}
+                        {e.magnitude != null && (
+                          <>
+                            <br />
+                            Magnitude: M{e.magnitude}
+                          </>
+                        )}
+                        <br />
+                        {new Date(e.timestamp).toLocaleDateString("en-IN")}
+                      </Tooltip>
+                    </CircleMarker>
+                  ))}
+                </MapContainer>
+                {/* Severity legend overlay — matches GlobeMap style */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  left: 12,
+                  background: 'rgba(10,22,40,0.82)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  gap: '12px',
+                  fontSize: '12px',
+                  color: 'white',
+                  pointerEvents: 'none',
+                  backdropFilter: 'blur(4px)',
+                  zIndex: 1000,
+                }}>
+                  {Object.entries(SEV_COLORS).map(([k, v]) => (
+                    <span key={k} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span style={{ width: 10, height: 10, borderRadius: '50%', background: v, display: 'inline-block' }} />
+                      {k.charAt(0).toUpperCase() + k.slice(1)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+          </>
         )}
       </div>
     </div>

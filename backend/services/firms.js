@@ -16,14 +16,14 @@ async function fetchFirmsActiveFires() {
   }
 
   console.log('[FIRMS] Fetching active thermal anomalies (NASA VIIRS) for India...');
-  
+
   // Example URL: https://firms.modaps.eosdis.nasa.gov/api/area/csv/[key]/VIIRS_SNPP_NRT/68,6.5,97.5,37.5/1
   const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${MAP_KEY}/${SOURCE}/${INDIA_BBOX}/${DAYS}`;
 
   try {
     const response = await axios.get(url);
     const csvString = response.data;
-    
+
     // FIRMS returns plain text CSV. Parse it into an array of JS objects
     const records = parse(csvString, {
       columns: true,
@@ -48,7 +48,7 @@ async function fetchFirmsActiveFires() {
       // Rule Engine: Only trigger alerts for NOMINAL or HIGH confidence fires 
       // with significant thermal energy (FRP > 15) to filter out small garbage/farm fires.
       if ((confidence === 'n' || confidence === 'h') && frp > 15.0) {
-        
+
         let severity = 'medium';
         if (confidence === 'h' && frp > 100) severity = 'extreme';
         else if (frp > 50) severity = 'high';
