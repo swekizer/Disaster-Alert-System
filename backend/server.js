@@ -14,14 +14,30 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  // Local development
+  'http://localhost:5173',
+  'http://localhost:4173',
+  // Production frontend
+  'https://disaster-alert-system-henna-theta.vercel.app',
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, Postman) or any localhost port in dev
-    if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Allow requests with no origin (curl, Postman, mobile apps)
+    if (!origin) return callback(null, true);
+    // Allow all localhost ports in dev
+    if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+      return callback(null, true);
     }
+    // Allow any Vercel preview deploy for this project
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
 }));
