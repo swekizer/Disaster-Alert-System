@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { fetchNews } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+
 // ── Constants ──────────────────────────────────────────────────────────────────
 const TOPIC_OPTIONS = [
   { value: 'all',        label: '🌐 All',        color: '#1A2332' },
@@ -41,40 +42,46 @@ function NewsCard({ article }) {
     : '';
 
   return (
-    <a
-      className="news-card"
-      href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      id={`news-article-${encodeURIComponent(article.url).slice(0, 30)}`}
-    >
-      {article.image ? (
-        <div className="news-card-img-wrap">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="news-card-img"
-            onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
-          />
-        </div>
-      ) : (
-        <div className="news-card-img-placeholder">📰</div>
-      )}
-
-      <div className="news-card-body">
-        <div className="news-card-meta-top">
-          <span className="news-source-badge">{article.sourceName}</span>
-          {pubDate && <span className="news-card-time">{pubDate}</span>}
-        </div>
-        <h3 className="news-card-title">{article.title}</h3>
-        {article.description && (
-          <p className="news-card-desc">{article.description}</p>
+    <div className="news-card">
+      <a
+        href={article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        id={`news-article-${encodeURIComponent(article.url).slice(0, 30)}`}
+        className="news-card-link"
+      >
+        {article.image ? (
+          <div className="news-card-img-wrap">
+            <img
+              src={article.image}
+              alt={article.title}
+              className="news-card-img"
+              onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}
+            />
+          </div>
+        ) : (
+          <div className="news-card-img-placeholder">📰</div>
         )}
-        <span className="news-read-more">Read more →</span>
-      </div>
-    </a>
+
+        <div className="news-card-body">
+          <div className="news-card-meta-top">
+            <span className="news-source-badge">{article.sourceName}</span>
+            {pubDate && <span className="news-card-time">{pubDate}</span>}
+          </div>
+          <h3 className="news-card-title">{article.title}</h3>
+          {article.description && (
+            <p className="news-card-desc">{article.description}</p>
+          )}
+
+          <div className="news-card-footer">
+            <span className="news-read-more">Read more →</span>
+          </div>
+        </div>
+      </a>
+    </div>
   );
 }
+
 
 function NewsSkeletonCard() {
   return (

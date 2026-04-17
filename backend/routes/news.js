@@ -1,6 +1,7 @@
-const express = require('express');
-const axios   = require('axios');
-const router  = express.Router();
+const express       = require('express');
+const axios         = require('axios');
+const router        = express.Router();
+const DisasterEvent = require('../models/DisasterEvent');
 
 // ── In-memory cache (30 min TTL to conserve free-tier quota) ─────────────────
 const CACHE_TTL_MS = 30 * 60 * 1000;

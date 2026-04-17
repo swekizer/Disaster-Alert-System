@@ -15,7 +15,7 @@ export function setupAxiosAuth(getToken) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (err) {
-      console.warn("Could not get Clerk token");
+      console.warn("Could not get Clerk token", err);
     }
     return config;
   });
@@ -64,3 +64,4 @@ export async function fetchNews({ topic = 'all', date } = {}) {
   const { data } = await api.get('/news', { params });
   return data;
 }
+
