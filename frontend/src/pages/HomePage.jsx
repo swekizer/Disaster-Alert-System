@@ -69,9 +69,7 @@ export default function HomePage({ geo, updateLastUpdated }) {
         {/* Backend status */}
         {backendOk === false && (
           <div className="alert-banner danger">
-            ⚠️ Backend server is not reachable. Start the backend with{' '}
-            <code style={{ fontFamily: 'monospace' }}>npm run dev</code> in{' '}
-            <code style={{ fontFamily: 'monospace' }}>backend/</code>.
+            ⚠️ Unable to reach the backend server. Please try again in a moment.
           </div>
         )}
 
